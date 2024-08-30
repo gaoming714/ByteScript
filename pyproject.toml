@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "bytescript"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "~3.11 || ~3.12"
+tqdm = "^4.66.4"
+rich = "^13.7.1"
+loguru = "^0.7.2"
+requests = "^2.32.3"
+playwright = "^1.45.0"
+ipython = "^8.26.0"
+tomlkit = "^0.13.0"
+pendulum = "^3.0.0"
+nuitka = "^2.3.11"
+opencv-python = "^4.10.0.84"
+pillow = "^10.4.0"
+ipdb = "^0.13.13"
+openai = "^1.35.15"
+polars = "^1.2.1"
+pandas = "^2.2.2"
+openpyxl = "^3.1.5"
+flask = "^3.0.3"
+betterproto = "^1.2.5"
+websocket-client = "^1.8.0"
+pyexecjs = "^1.5.1"
+trio = "^0.26.2"
+tenacity = "^9.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
