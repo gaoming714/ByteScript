@@ -77,7 +77,8 @@ def launch():
         store_cookie()
     with sync_playwright() as p:
         # browser = p.chromium.launch(headless=False)
-        browser = p.firefox.launch(headless=False)
+        # browser = p.firefox.launch(headless=False)
+        browser = p.firefox.launch(headless=True)
         context = browser.new_context(storage_state=COOKIE)
         page = context.new_page()
         page.set_viewport_size({"width": 1480, "height": 900})
@@ -91,7 +92,8 @@ def launch():
         time.sleep(1)
 
         ########## Login success
-        # traffic_uni(page, "3705716058318045239", "大罐米粉")
+        # print(3)
+        # traffic_uni(page, "3705764705114128825", "无奶米粉")
         # raise
 
         # test
@@ -121,7 +123,7 @@ def launch():
         # limitsales(page, limit_id,  sale_list, pid)
         tmp_count = load_tmp_count()
         if tmp_count == symbol_count:
-            logger.success("Finish all {}.".format(index + 1))
+            logger.success("Finish all {}.".format(tmp_count))
             time.sleep(6000)
         for index in range(
             tmp_count, symbol_count
@@ -218,7 +220,6 @@ def fetch_pid(page, target_title, init_dt, must_flag=True):
     # select pid
     row_elem = page.locator(".ecom-g-table-row")
     row_count = row_elem.count()
-    logger.debug(row_count)
     logger.debug("Search title {}".format(target_title))
     logger.debug("Search checkpoint {}".format(init_dt))
     # ipdb.set_trace()
@@ -804,7 +805,7 @@ def traffic_uni(page, pid_target, uname):
     )
     # kimi
     user_content = (
-        "给我10个贝拉米 {} 的种草标题.每个标题 50个汉字,禁止用广告极限词.".format(uname)
+        "给我10个贝拉米 {} 的种草标题.每个标题 50个汉字,禁止用广告极限词.不可以出现下面这几个词语：0添加、无添加、首选、肠胃".format(uname)
     )
     res_dict = kimiDB.ask(user_content)
     kimi_title_list = res_dict["data"]
@@ -832,7 +833,7 @@ def traffic_uni(page, pid_target, uname):
     page.get_by_role("button", name="确定").click()
 
     # ROI & else
-    page.get_by_role("textbox", name="请输入目标").fill("4")
+    page.get_by_role("textbox", name="请输入目标").fill("3")
     time.sleep(0.5)
     page.get_by_placeholder("请输入金额").fill("9999")
     time.sleep(0.5)
@@ -928,18 +929,34 @@ def traffic_uni(page, pid_target, uname):
     page.locator("#baseInfo").get_by_role("textbox").fill(base_info)
     time.sleep(1)
 
-    # error check
-    if page.locator(".step-status").count():
-        logger.warning("Found error retry.(find .step-status)")
-        raise
     # Final Check
     # ipdb.set_trace()
     click_sugar(page.get_by_role("button", name="发布计划"))
     time.sleep(1.5)
     click_sugar(page.get_by_role("button", name="确认发布"))
-    time.sleep(2)
+    time.sleep(3)
 
-    return Nox(0)
+    # traffic status check
+    page.goto(
+        "https://qianchuan.jinritemai.com/creation/uni-prom-product?aavid=1712324674292736"  # 贝拉米
+    )
+    time.sleep(1)
+    # ready
+    page.get_by_role("button", name="添加商品", exact=True).click()
+    time.sleep(0.5)
+    # product mask
+    if not page.locator(".oc-drawer-close").is_visible():
+        time.sleep(0.5)
+    page.get_by_placeholder("请输入商品名称/ID搜索").fill(pid_target)
+    time.sleep(1)
+    page.keyboard.press("Enter")
+    time.sleep(2)
+    if page.locator(
+        ".card-container > .card-disabled"
+    ).count():
+        return Nox(0)
+    else:
+        raise
 
 @retry(stop=stop_after_attempt(3))
 def login_shop(page, name=None):

@@ -27,7 +27,7 @@ Pooh = {}
 COOKIE = Path() / "cookies" / "Bellamy_171.json"
 # COOKIE = Path() / "cookies" / "cookie_Bellamy_177.json"
 
-main_path = Path() / "data" / "71"
+main_path = Path() / "data" / "51"
 ########################################################################################
 
 
@@ -90,7 +90,7 @@ def launch():
         time.sleep(1)
 
         ########## Login success
-        # traffic_uni(page, "3705529162673553662", "菁跃3段")
+        # traffic_uni(page, "3705540529480663148", "菁跃3段")
         # raise
 
         # test
@@ -117,7 +117,7 @@ def launch():
         # limitsales(page, limit_id,  sale_list, pid)
 
         for index in range(
-            3, symbol_count
+            0, symbol_count
         ):  # symbol_count  如果这里不能跑了，从哪个开始，把 0 改成对应的值
             figure_dict = figure_list[index]
             if any(not item.exists() for item in figure_dict.values()):
@@ -142,6 +142,7 @@ def launch():
             #     time.sleep(4)
             now = pendulum.now("Asia/Shanghai")
             now_str = str(now)[:19]
+            continue
             pid, checkpoint = fetch_pid(page, new_title, now)
             record_id(main_path / "record.txt", pid)
 
@@ -195,7 +196,7 @@ def store_cookie():
         browser.close()
 
 
-@retry(stop=stop_after_attempt(60))
+@retry(stop=stop_after_attempt(100))
 def fetch_pid(page, target_title, init_dt, must_flag=True):
     # goto list
     page.goto("https://fxg.jinritemai.com/ffa/g/list")
@@ -238,7 +239,7 @@ def rebuild_product(page, copyid, figure, uname=None):
     # kimi full_name
     user_content = (
         "{}\n"
-        "上一句变换顺序,不改变原意，去掉标点符号,去掉空格\n"
+        "处理上一句变换顺序,不改变原意，去掉标点符号,去掉空格\n"
         "{} 是一个词组,\n"
         "\n".format(full_name_elem.first.input_value(), uname)
     )
@@ -247,7 +248,7 @@ def rebuild_product(page, copyid, figure, uname=None):
     # kimi short_name
     user_content = (
         "{}\n"
-        "上一句变换顺序,不改变原意，去掉标点符号,去掉空格\n"
+        "处理上一句变换顺序,不改变原意，去掉标点符号,去掉空格\n"
         "{} 是一个词组,\n"
         "\n".format(short_name_elem.first.input_value(), uname)
     )
@@ -260,7 +261,7 @@ def rebuild_product(page, copyid, figure, uname=None):
             page.locator(".ecom-guide-normal-step-button").get_by_role(
                 "button", name="知道了"
             ),
-            timeout=10,
+            timeout=15,
         )
         Pooh["first_flag"] = False
     time.sleep(1)
@@ -442,7 +443,7 @@ def rebuild_product(page, copyid, figure, uname=None):
     # ipdb.set_trace()
     time.sleep(0.5)
     page.get_by_role("button", name="发布商品").click()
-    time.sleep(1)
+    time.sleep(5)
 
     logger.debug("End rebuild_product")
     return Nox(0, full_name_final)
