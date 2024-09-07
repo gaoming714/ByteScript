@@ -50,7 +50,7 @@ def launch():
         pinx = layer['x']
         piny = layer['y']
         if "*" in symbol:
-            comfyui_list = main_path.glob("ComfyUI*.png")
+            comfyui_list = main_path.glob("*.png")
             comfyui_layer = [{"symbol": file, 'x': pinx, 'y': piny} for file in comfyui_list]
             layer_mixin.append(comfyui_layer)
         else:
@@ -75,6 +75,58 @@ def launch():
         output_name = "{}.{}.{}.png".format(pid, fid, tid) # pid. tid
         result_img.save(output_path / output_name)
 
+def launch2():
+    with open("convert/config2.toml", "r", encoding="utf-8") as f:
+        config = tomlkit.parse(f.read())
+    layer_mixin = []
+    pid = "32"
+    main_path = Path('./convert/input')
+    output_path = Path()/config["output"] #Path('./convert/1-1')
+    # 检查路径是否存在以及是否为文件夹
+    if output_path.exists():
+        if output_path.is_dir():
+            print(f"文件夹 '{output_path}' 已存在。")
+        else:
+            # 路径存在，但不是文件夹
+            print(f"存在同名的文件 '{output_path}'，而不是文件夹。")
+    else:
+        # 路径不存在，创建文件夹
+        try:
+            output_path.mkdir()  # 只创建当前文件夹，不创建父文件夹
+            print(f"文件夹 '{output_path}' 已创建。")
+        except OSError as error:
+            print(f"创建文件夹 '{output_path}' 时出错: {error}")
+    logger.debug(main_path)
+    # get from toml & files
+    for layer in config["layer"]:
+        symbol = layer["symbol"]
+        pinx = layer['x']
+        piny = layer['y']
+        if "*" in symbol:
+            comfyui_list = main_path.glob("*.png")
+            comfyui_layer = [{"symbol": file, 'x': pinx, 'y': piny} for file in comfyui_list]
+            layer_mixin.append(comfyui_layer)
+        else:
+            ui_layer = {"symbol": main_path / symbol, 'x': pinx, 'y': piny}
+            layer_mixin.append(ui_layer)
+    logger.debug(layer_mixin)
+    layer_matrix = flatten_layer(layer_mixin)
+    logger.debug(layer_matrix)
+
+    for layer_list in zip(*layer_matrix):
+        result_img = None
+        for layer in layer_list:
+            layer_img = Image.open(layer['symbol'])
+            pinx = layer['x']
+            piny = layer['y']
+            result_img = blend_images_offset(result_img, layer_img, pinx, piny)
+        # result_img.show()
+        now = pendulum.now("Asia/Shanghai")
+        pid = config['pid']
+        fid = config['figure']
+        tid = now.strftime('%Y%m%d%H%M%S.%f')
+        output_name = "{}.{}.{}.png".format(pid, fid, tid) # pid. tid
+        result_img.save(output_path / output_name)
 
 def flatten_layer(layer_mixin):
     # 将列表中的所有列表元素存储在一个列表中
@@ -161,6 +213,7 @@ if __name__ == "__main__":
     # print(DUCK)
     # raise
     launch()
+    launch2()
 
 
 ##   现在的问题是上下层还很奇怪，到时是0在上还是0在下呢
