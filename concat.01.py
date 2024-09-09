@@ -50,7 +50,7 @@ def launch():
         pinx = layer['x']
         piny = layer['y']
         if "*" in symbol:
-            comfyui_list = main_path.glob("*.png")
+            comfyui_list = main_path.glob("ComfyUI*.png")
             comfyui_layer = [{"symbol": file, 'x': pinx, 'y': piny} for file in comfyui_list]
             layer_mixin.append(comfyui_layer)
         else:
@@ -71,7 +71,7 @@ def launch():
         now = pendulum.now("Asia/Shanghai")
         pid = config['pid']
         fid = config['figure']
-        tid = now.strftime('%Y%m%d%H%M%S.%f')
+        tid = str(now)[:22].replace(' ', '.').replace(':', '')
         output_name = "{}.{}.{}.png".format(pid, fid, tid) # pid. tid
         result_img.save(output_path / output_name)
 
@@ -103,7 +103,7 @@ def launch2():
         pinx = layer['x']
         piny = layer['y']
         if "*" in symbol:
-            comfyui_list = main_path.glob("*.png")
+            comfyui_list = main_path.glob("ComfyUI*.png")
             comfyui_layer = [{"symbol": file, 'x': pinx, 'y': piny} for file in comfyui_list]
             layer_mixin.append(comfyui_layer)
         else:
@@ -124,7 +124,7 @@ def launch2():
         now = pendulum.now("Asia/Shanghai")
         pid = config['pid']
         fid = config['figure']
-        tid = now.strftime('%Y%m%d%H%M%S.%f')
+        tid = str(now)[:22].replace(' ', '.').replace(':', '')
         output_name = "{}.{}.{}.png".format(pid, fid, tid) # pid. tid
         result_img.save(output_path / output_name)
 

@@ -24,8 +24,10 @@ daren:
 	pm2 start ./daemon/daren.sh --name daren.puppy1 --silent --log
 
 rebuild:
-	pm2 start ./daemon/rebuild.22.sh --name rebuild.22 --silent --log
-	pm2 start ./daemon/rebuild.23.sh --name rebuild.23 --silent --log
+	pm2 start ./daemon/rebuild.2a.sh --name rebuild.2a --silent --log
+	pm2 start ./daemon/rebuild.2b.sh --name rebuild.2b --silent --log
+	pm2 start ./daemon/rebuild.2c.sh --name rebuild.2c --silent --log
+	pm2 start ./daemon/rebuild.2d.sh --name rebuild.2d --silent --log
 
 status:
 	pm2 status

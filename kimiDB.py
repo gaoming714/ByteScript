@@ -13,6 +13,7 @@ def ask(user_content = None, system_content = None, temp = 0.618):
         "你是 Kimi。由 Moonshot AI 提供的人工智能助手，你更擅长种草文案的撰写，你不可以写广告极限词，不可以写任何功效有关的文案。"
         "你不使用中文符号，如果需要使用符号都是用英文符号,请输出json格式，key='data'"
         "你可以正确处理汉字和英文的长度，一个汉字算两个字符，其他算一个字符"
+        "不可以出现下面这几个词语：0添加，无添加，首选，肠胃"
     )
     client = OpenAI(
         api_key = Pooh["MOONSHOT_API_KEY"],
@@ -47,6 +48,42 @@ def ask(user_content = None, system_content = None, temp = 0.618):
     #     print("Output error")
     #     print(payload_dict.keys())
     #     return
+
+def fetch(user_content = None, system_content = None, temp = 0.618):
+    if not system_content:
+        system_content = (
+        "你是 Kimi。不可以写任何功效有关的文案。"
+        # "你正在没得事贝拉米奶粉和贝拉米米粉，没有其他品牌，没有其他品类，直播带货中"
+        # "你的回复大约在100个字以内，不要太长，推荐用户买贝拉米的奶粉或者贝拉米的米粉。"
+        "你擅长推荐一些家庭使用的小商品，希望用户购买，经济实惠。优惠力度大。"
+        "你知道我每次提问提出的客户名字，可以针对不同的客户名字进行不同的上下文记录"
+        "你不使用中文符号，如果需要使用符号都是用英文符号,请输出json格式，key='data'"
+        "你可以正确处理汉字和英文的长度，一个汉字算两个字符，其他算一个字符"
+    )
+    client = OpenAI(
+        api_key = Pooh["MOONSHOT_API_KEY"],
+        base_url = "https://api.moonshot.cn/v1",
+    )
+    # print(system_content)
+    # print(user_content)
+    completion = client.chat.completions.create(
+        model = "moonshot-v1-8k",
+        messages = [
+            {"role": "system", "content": system_content },
+            {"role": "user", "content": user_content }
+        ],
+        # temperature = 0.3,
+        temperature = temp, # 0.618
+        # temperature = 0.7,
+        response_format={"type": "json_object"},
+    )
+
+    content = completion.choices[0].message.content
+    if "data" in content:
+        print(json.loads(content)["data"])
+        return json.loads(content)
+    else:
+        raise
 
 def launch():
     client = OpenAI(

@@ -25,7 +25,7 @@ conn = sqlite3.connect("db.sqlite3")
 Pooh = {}
 
 
-COOKIE = Path() / "cookies" / "Bellamy_hai.json"
+COOKIE = Path() / "cookies" / "Bellamy_haiyang.json"
 # COOKIE = Path() / "cookies" / "cookie_Bellamy_177.json"
 
 main_path = Path() / "data" / "32-1"
@@ -258,7 +258,8 @@ def rebuild_product(page, copyid, figure, uname=None):
         "\n".format(full_name_elem.first.input_value(), uname)
     )
     res_dict = kimiDB.ask(user_content)
-    full_name_str = res_dict["data"].replace(" ", "")
+    random_chars = ''.join(chr(random.randint(33, 126)) for _ in range(2))
+    full_name_str = res_dict["data"].replace(" ", "") + "" + random_chars
     # kimi short_name
     user_content = (
         "{}\n"
@@ -953,6 +954,10 @@ def traffic_uni(page, pid_target, uname):
     if page.locator(
         ".card-container > .card-disabled"
     ).count():
+        return Nox(0)
+    elif page.locator(
+        ".radio > .oc-checkbox > .ovui-checkbox > .ovui-checkbox__wrapper > .ovui-checkbox__inner"
+    ).count() == 0:
         return Nox(0)
     else:
         raise
