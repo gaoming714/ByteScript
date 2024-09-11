@@ -71,7 +71,7 @@ def launch():
         now = pendulum.now("Asia/Shanghai")
         pid = config['pid']
         fid = config['figure']
-        tid = str(now)[:22].replace(' ', '.').replace(':', '')
+        tid = now.to_iso8601_string()[:22].replace(":","-")
         output_name = "{}.{}.{}.png".format(pid, fid, tid) # pid. tid
         result_img.save(output_path / output_name)
 
@@ -124,7 +124,7 @@ def launch2():
         now = pendulum.now("Asia/Shanghai")
         pid = config['pid']
         fid = config['figure']
-        tid = str(now)[:22].replace(' ', '.').replace(':', '')
+        tid = now.to_iso8601_string()[:22].replace(":","-")
         output_name = "{}.{}.{}.png".format(pid, fid, tid) # pid. tid
         result_img.save(output_path / output_name)
 

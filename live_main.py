@@ -29,7 +29,7 @@ import kimiDB
 
 from util import logConfig, logger, lumos, Nox
 
-logConfig("logs/live_main.log", rotation="10 MB", level="DEBUG", lite=True)
+logConfig("logs/live_main.log", rotation="10 MB", level="DEBUG", lite=False)
 
 conn = sqlite3.connect("db.sqlite3")
 
@@ -268,6 +268,7 @@ class DouyinLiveWebFetcher:
         now = pendulum.now()
         payload_dict = {
             "uname" : user_name,
+            "room" : self.live_id,
             "act" : "chat",
             "msg" : content,
             "sec_uid" : sec_uid,
@@ -301,10 +302,11 @@ class DouyinLiveWebFetcher:
         now = pendulum.now()
         payload_dict = {
             "uname" : user_name,
+            "room" : self.live_id,
             "act" : "enter",
             "msg" : "",
             "sec_uid" : sec_uid,
-            "timestamp" : now.to_iso8601_string()
+            "timestamp" : str(now)[:19]
         }
         sqliteDB.insert_mq(conn, payload_dict, table="liveQueue")
         # url = "http://127.0.0.1:8001/user/{}".format(sec_uid)
