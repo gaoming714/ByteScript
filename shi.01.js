@@ -1,8 +1,27 @@
+// 最初要执行这两行
+var results = []; // 用于保存每个元素的字典
+var repeatCount = 0; // 记录 collectData 执行次数
 
-const results = []; // 用于保存每个元素的字典
-const repeatCount = 0; // 记录 collectData 执行次数
+// 主要有两个函数downloadData collectData
+function downloadData() {
+    // 将数组转换为JSON字符串
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(results));
+  
+    // 获取当前时间，并格式化为YYYYMMDDHHMMSS
+    var now = new Date();
+    var fileName = now.toISOString().replace(/[-T:]/g, "").substr(0, 14) + ".json";
+  
+    // 创建一个下载链接
+    var downloadLink = document.createElement("a");
+    downloadLink.download = fileName;
+    downloadLink.href = dataStr;
+    downloadLink.clickvar
+  
+    // 清除创建的元素
+    downloadLink.remove();
+}
 
-async function collectData() {
+async function collectData(count) {
     // 获取所有 class=el-table__row 的元素
     const rows = document.querySelectorAll('.el-table__row');
     
@@ -36,7 +55,14 @@ async function collectData() {
             // 获取弹出框中的 class=el-message-box__message 的值
             const messageBox = document.querySelector('.el-message-box__message');
             if (messageBox) {
-                tmp_dict['messageBoxMessage'] = messageBox.textContent.trim();
+                tmp_dict['messageBox'] = messageBox.textContent.trim();
+                const match = messageBox.textContent.trim().match(/\d{11}$/);
+                if (match) {
+                  tmp_dict["msgTool"] = match[0];
+                } else {
+                  // 如果没有匹配到，则设置默认值或进行其他处理
+                  tmp_dict["msgTool"] = "未找到11位数字";
+                }
             }
 
             // 点击关闭按钮
@@ -49,7 +75,7 @@ async function collectData() {
 
         // 将当前字典保存到结果数组中
         results.push(tmp_dict);
-        
+
         // 等待 1 秒以便处理下一个元素
         await new Promise(resolve => setTimeout(resolve, 1000));
     }
@@ -61,7 +87,7 @@ async function collectData() {
     console.log("Current Data:", results);
 
     // 检查是否需要继续执行
-    if (repeatCount < 2) {
+    if (repeatCount <= count) {
         // 点击 class=el-icon-arrow-right 按钮
         const nextButton = document.querySelector('.btn-next');
         if (nextButton) {
@@ -70,30 +96,42 @@ async function collectData() {
         }
 
         // 再次调用 collectData 函数
-        await collectData();
+        await collectData(count);
     } else {
         console.log("Data collection completed. Final Results:", results);
     }
 
 }
 
-// 启动数据收集
-collectData();
+
 
 
 
 // 假设有一个数组
 //var results = [1, 2, 3, 4, 5];
 
-// 这段代码粘上就可以下载
-// 将数组转换为JSON字符串
-var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(results));
+function downloadData() {
+    // 将数组转换为JSON字符串
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(results));
+  
+    // 获取当前时间，并格式化为YYYYMMDDHHMMSS
+    var now = new Date();
+    var fileName = now.toISOString().replace(/[-T:]/g, "").substr(0, 14) + ".json";
+  
+    // 创建一个下载链接
+    var downloadLink = document.createElement("a");
+    downloadLink.download = fileName;
+    downloadLink.href = dataStr;
+    downloadLink.click();
+  
+    // 清除创建的元素
+    downloadLink.remove();
+}
 
-// 创建一个下载链接
-var downloadLink = document.createElement("a");
-downloadLink.download = "myArray.json";
-downloadLink.href = dataStr;
-downloadLink.click();
 
-// 清除创建的元素
-downloadLink.remove();
+
+// 启动数据收集
+collectData(10);
+
+// 下载
+downloadData()
